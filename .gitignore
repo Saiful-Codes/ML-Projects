@@ -1,20 +1,28 @@
-# Python
+# Environments
+.venv/
+venv/
+env/
+
+# Python junk
 __pycache__/
 *.pyc
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Local datasets & large artifacts
-**/data/
-**/models/
-**/*.pth
-
 # OS
 .DS_Store
 Thumbs.db
 
-# Virtual environments
-.venv/
-venv/
-env/
+# Data (raw datasets can be huge)
+*.csv
+data/raw/
+data/processed/
+
+# Models (can be huge)
+*.joblib
+*.pth
+
+# Reports / outputs (optional)
+reports/
+results/
