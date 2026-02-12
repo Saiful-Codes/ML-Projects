@@ -155,15 +155,9 @@ The goal of this repository is to:
 ## Author
 
 Saiful Islam Shihab
-Bachelor of Computer Science (Artificial Intelligence)
+
+Bachelor of Computer Science 
+
+La Trobe University
+
 Melbourne, Australia
-
----
-
-If you want, I can now help you improve:
-
-* Individual project READMEs
-* Add badges (Python version, license, etc.)
-* Add performance metrics tables
-* Make Fraud Detection stand out as the flagship project
-
