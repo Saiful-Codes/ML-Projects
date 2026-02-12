@@ -1,0 +1,23 @@
+# data
+data/*.csv
+data/*.zip
+data/raw/
+data/processed/
+
+# models
+models/*.pkl
+models/*.joblib
+
+# notebooks
+.ipynb_checkpoints/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
