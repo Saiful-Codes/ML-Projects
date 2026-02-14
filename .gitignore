@@ -26,3 +26,12 @@ data/processed/
 # Reports / outputs (optional)
 reports/
 results/
+
+# ================================
+# Energy Forecasting Project
+# ================================
+
+Energy-Forecasting-Anomaly-Detection/data/raw/
+Energy-Forecasting-Anomaly-Detection/data/processed/
+Energy-Forecasting-Anomaly-Detection/models/
+Energy-Forecasting-Anomaly-Detection/app/__pycache__/
