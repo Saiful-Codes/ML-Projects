@@ -1,13 +1,13 @@
 import sys
 import os
 
-# Add project root to Python path
+# Add project root to Python path (so joblib can import src.* modules inside the saved pipeline)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import io
 import joblib
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
 
 
 MODEL_PATH = "models/fraud_pipeline_rf_v1.joblib"
@@ -28,8 +28,6 @@ def validate_input(df: pd.DataFrame, pipeline) -> list:
     For your project, it should match the raw feature columns like:
     Time, V1..V28, Amount
     """
-    # If your pipeline was trained on these exact columns, it will expect them.
-    # We'll use a safe check: attempt a small transform/predict later too.
     required_cols = getattr(pipeline, "feature_names_in_", None)
     if required_cols is None:
         # If not available, we can't strictly validate here.
@@ -39,10 +37,23 @@ def validate_input(df: pd.DataFrame, pipeline) -> list:
     return missing
 
 
+def set_plot_defaults():
+    """
+    Recommended compact plot settings:
+    - Smaller default figure size (so you don't need to scroll)
+    - Slightly smaller font size
+    """
+    plt.rcParams["figure.figsize"] = (9, 4)
+    plt.rcParams["font.size"] = 10
+
+
 def main():
     st.set_page_config(page_title="Fraud Detection System", layout="wide")
     st.title("Fraud Detection System")
     st.write("Upload a CSV file and run the trained model to get fraud risk predictions.")
+
+    # Apply compact plotting defaults for the whole app
+    set_plot_defaults()
 
     pipeline, threshold = load_assets()
 
@@ -62,6 +73,10 @@ def main():
     st.write("Preview of uploaded data:")
     st.dataframe(df.head(10), use_container_width=True)
 
+    # Optional: if user uploads the full dataset including target
+    if "Class" in df.columns:
+        df = df.drop(columns=["Class"])
+
     # Validate columns (basic)
     missing_cols = validate_input(df, pipeline)
     if missing_cols:
@@ -79,14 +94,56 @@ def main():
             results["fraud_probability"] = proba
             results["fraud_flag"] = (results["fraud_probability"] >= threshold).astype(int)
 
+            # --- Metrics ---
+            total_rows = len(results)
+            flagged_count = int(results["fraud_flag"].sum())
+            flagged_rate = (flagged_count / total_rows) * 100 if total_rows > 0 else 0.0
+
             st.success("Prediction complete.")
 
+            st.subheader("Summary Metrics")
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Total transactions", f"{total_rows}")
+            c2.metric("Flagged as fraud", f"{flagged_count}")
+            c3.metric("Flagged rate", f"{flagged_rate:.2f}%")
+            c4.metric("Threshold used", f"{threshold:.5f}")
+
+            # --- Charts (compact) ---
+            st.subheader("Risk Distribution")
+            fig, ax = plt.subplots(figsize=(9, 4))
+            ax.hist(results["fraud_probability"], bins=30)
+            ax.set_xlabel("Fraud probability")
+            ax.set_ylabel("Count")
+            plt.tight_layout()
+            st.pyplot(fig, use_container_width=False)
+
+            st.subheader("Flagged vs Not Flagged")
+            counts = results["fraud_flag"].value_counts().sort_index()
+            labels = ["Not Flagged (0)", "Flagged (1)"]
+
+            fig2, ax2 = plt.subplots(figsize=(7, 4))
+            ax2.bar(labels, [counts.get(0, 0), counts.get(1, 0)])
+            ax2.set_ylabel("Count")
+            plt.tight_layout()
+            st.pyplot(fig2, use_container_width=False)
+
+            # --- Tables ---
             st.subheader("Output: Full Results")
             st.dataframe(results.head(20), use_container_width=True)
 
             st.subheader("Top 20 Most Risky Transactions")
             top20 = results.sort_values("fraud_probability", ascending=False).head(20)
             st.dataframe(top20, use_container_width=True)
+
+            # --- Download button ---
+            st.subheader("Download Results")
+            csv_bytes = results.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                label="Download results as CSV",
+                data=csv_bytes,
+                file_name="fraud_predictions.csv",
+                mime="text/csv",
+            )
 
             st.caption(f"Using saved threshold: {threshold:.5f}")
 
