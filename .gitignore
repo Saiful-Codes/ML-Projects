@@ -35,3 +35,5 @@ Energy-Forecasting-Anomaly-Detection/data/raw/
 Energy-Forecasting-Anomaly-Detection/data/processed/
 Energy-Forecasting-Anomaly-Detection/models/
 Energy-Forecasting-Anomaly-Detection/app/__pycache__/
+
+!models/threshold_v1.json
