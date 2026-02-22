@@ -63,6 +63,9 @@ if uploaded is None:
 # ----------------------------
 try:
     df = pd.read_csv(uploaded)
+    if dt_col not in df.columns and y_col not in df.columns and df.shape[1] == 2:
+        uploaded.seek(0)  # reset file pointer
+        df = pd.read_csv(uploaded, header=None, names=[dt_col, y_col])
 except Exception as e:
     st.error(f"Could not read CSV: {e}")
     st.stop()
