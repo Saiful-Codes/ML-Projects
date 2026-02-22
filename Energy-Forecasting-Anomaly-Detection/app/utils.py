@@ -196,3 +196,36 @@ def get_expected_features(model):
     if hasattr(model, "feature_names_in_"):
         return list(model.feature_names_in_)
     return None
+
+def get_threshold_value(cfg: dict) -> float:
+    """
+    Extracts a usable threshold value from threshold_v1.json.
+    Supports different JSON shapes.
+    """
+    if cfg is None:
+        return None
+
+    # Common patterns
+    for key in ["threshold", "p95", "p99", "value"]:
+        if key in cfg and isinstance(cfg[key], (int, float)):
+            return float(cfg[key])
+
+    # Nested patterns
+    if "residual_threshold" in cfg and isinstance(cfg["residual_threshold"], (int, float)):
+        return float(cfg["residual_threshold"])
+
+    # If it stores percentiles like {"percentiles": {"p95": 0.8}}
+    if "percentiles" in cfg and isinstance(cfg["percentiles"], dict):
+        for key in ["p95", "p99"]:
+            if key in cfg["percentiles"]:
+                return float(cfg["percentiles"][key])
+
+    return None
+
+def compute_severity(residuals: np.ndarray, threshold: float) -> np.ndarray:
+    """
+    Severity score = how many times bigger the |residual| is than threshold.
+    severity = |residual| / threshold
+    """
+    abs_r = np.abs(residuals)
+    return abs_r / max(threshold, 1e-8)
