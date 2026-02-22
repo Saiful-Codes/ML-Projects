@@ -1,8 +1,3 @@
-Below is a **professional, clean, portfolio-ready README** tailored to your completed project.
-You can paste this directly into your GitHub `README.md`.
-
----
-
 # Energy Consumption Forecasting & Anomaly Detection
 
 ## Overview
