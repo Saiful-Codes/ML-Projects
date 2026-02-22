@@ -198,27 +198,36 @@ def get_expected_features(model):
     return None
 
 def get_threshold_value(cfg: dict) -> float:
-    """
-    Extracts a usable threshold value from threshold_v1.json.
-    Supports different JSON shapes.
-    """
-    if cfg is None:
+    if cfg is None or not isinstance(cfg, dict):
         return None
 
-    # Common patterns
-    for key in ["threshold", "p95", "p99", "value"]:
+    # 1) Direct common keys
+    for key in ["threshold", "value", "residual_threshold", "thr", "thr_p95", "thr_p99", "p95", "p99"]:
         if key in cfg and isinstance(cfg[key], (int, float)):
             return float(cfg[key])
 
-    # Nested patterns
-    if "residual_threshold" in cfg and isinstance(cfg["residual_threshold"], (int, float)):
-        return float(cfg["residual_threshold"])
+    # 2) Your format: params -> thr_p95 / thr_p99 / threshold
+    params = cfg.get("params")
+    if isinstance(params, dict):
+        for key in ["thr_p95", "thr_p99", "threshold", "value", "thr"]:
+            if key in params and isinstance(params[key], (int, float)):
+                return float(params[key])
 
-    # If it stores percentiles like {"percentiles": {"p95": 0.8}}
-    if "percentiles" in cfg and isinstance(cfg["percentiles"], dict):
+        # If strategy says p95/p99, map to the correct param key
+        strategy = cfg.get("strategy")
+        if isinstance(strategy, str):
+            strategy = strategy.lower().strip()
+            if strategy == "p95" and "thr_p95" in params:
+                return float(params["thr_p95"])
+            if strategy == "p99" and "thr_p99" in params:
+                return float(params["thr_p99"])
+
+    # 3) Percentiles nested
+    percentiles = cfg.get("percentiles")
+    if isinstance(percentiles, dict):
         for key in ["p95", "p99"]:
-            if key in cfg["percentiles"]:
-                return float(cfg["percentiles"][key])
+            if key in percentiles and isinstance(percentiles[key], (int, float)):
+                return float(percentiles[key])
 
     return None
 
@@ -229,3 +238,41 @@ def compute_severity(residuals: np.ndarray, threshold: float) -> np.ndarray:
     """
     abs_r = np.abs(residuals)
     return abs_r / max(threshold, 1e-8)
+
+def top_percent_threshold(series: pd.Series, pct: float) -> float:
+    """
+    Returns threshold value for the top pct% highest values.
+    Example: pct=5 -> returns 95th percentile.
+    """
+    q = 1.0 - (pct / 100.0)
+    return float(series.quantile(q))
+
+def validate_required_columns(df: pd.DataFrame, required_cols: list) -> list:
+    missing = [c for c in required_cols if c not in df.columns]
+    return missing
+
+def parse_datetime_column(df: pd.DataFrame, dt_col: str) -> pd.DataFrame:
+    out = df.copy()
+    out[dt_col] = pd.to_datetime(out[dt_col], errors="coerce")
+    out = out.dropna(subset=[dt_col])
+    return out
+
+def prepare_uploaded_series(df: pd.DataFrame, dt_col: str, y_col: str, hourly=True) -> pd.Series:
+    """
+    Returns a clean time series (pd.Series) with DateTimeIndex.
+    If hourly=True, resamples to hourly mean.
+    """
+    out = df[[dt_col, y_col]].copy()
+    out = parse_datetime_column(out, dt_col)
+    out = out.sort_values(dt_col).set_index(dt_col)
+
+    # Convert numeric safely
+    out[y_col] = pd.to_numeric(out[y_col], errors="coerce")
+    out = out.dropna(subset=[y_col])
+
+    series = out[y_col]
+
+    if hourly:
+        series = series.resample("H").mean()
+
+    return series
