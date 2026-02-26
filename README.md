@@ -1,28 +1,49 @@
 # ML-Projects
 
-This repository contains a collection of my Machine Learning projects developed as part of my structured learning journey in Artificial Intelligence and Applied Machine Learning.
+This repository contains a curated collection of end-to-end Machine Learning and Deep Learning projects developed as part of my structured journey in Artificial Intelligence. Each project focuses on practical implementation, clean architecture, reproducible workflows, and production-oriented thinking.
 
-The purpose of this repository is to demonstrate practical implementation skills, clean project structuring, reproducible workflows, and industry-relevant problem solving using Python and modern ML tools.
+The goal is not just to train models, but to design complete systems — from data preprocessing and feature engineering to evaluation, optimization, and deployment.
 
----
 
 ## Repository Overview
 
-This repository includes the following projects:
+This repository currently includes the following projects:
 
-### 1. Fraud Detection System
 
-An end-to-end machine learning project focused on detecting fraudulent financial transactions.
+### 1. Energy Consumption Forecasting & Anomaly Detection
+
+An end-to-end time-series forecasting system designed to predict hourly energy consumption and detect anomalous usage patterns.
 
 **Key Highlights**
 
-* Data preprocessing and feature engineering
-* Handling class imbalance
+* Time-based train/validation/test split to prevent data leakage
+* Lag and rolling-window feature engineering
+* Model comparison (Ridge Regression, Random Forest, Gradient Boosting)
+* Residual-based anomaly detection using percentile thresholding
+* Structured evaluation using MAE, RMSE, and MAPE
+* Modular pipeline packaging with CLI scoring support
+
+**Core Technologies**
+
+* Python
+* Pandas & NumPy
+* Scikit-learn
+* Matplotlib
+* Joblib
+
+
+### 2. Fraud Detection System
+
+A production-oriented imbalanced classification system for detecting fraudulent credit card transactions (284,000+ records, <1% fraud rate).
+
+**Key Highlights**
+
+* Feature engineering and data preprocessing
+* Class imbalance handling (class weights and evaluation trade-offs)
 * Model comparison (Logistic Regression, Random Forest, Gradient Boosting)
-* Hyperparameter tuning
-* Threshold optimization
-* Model packaging and inference pipeline
-* Explainability analysis
+* Hyperparameter tuning with cross-validation
+* Precision–recall optimization and threshold tuning
+* Packaged inference pipeline with saved model artifacts
 
 **Core Technologies**
 
@@ -32,17 +53,16 @@ An end-to-end machine learning project focused on detecting fraudulent financial
 * Matplotlib & Seaborn
 * Joblib
 
----
 
-### 2. CIFAR-10 CNN Classifier
+### 3. CIFAR-10 CNN Classifier
 
-A deep learning image classification project built using Convolutional Neural Networks.
+A deep learning image classification project implemented using Convolutional Neural Networks in PyTorch.
 
 **Key Highlights**
 
-* CNN architecture implementation
+* Custom CNN architecture implementation
 * Training and evaluation workflow
-* Hyperparameter tuning
+* Hyperparameter experimentation
 * Model saving and loading
 * Modular project structure
 
@@ -53,17 +73,16 @@ A deep learning image classification project built using Convolutional Neural Ne
 * NumPy
 * Matplotlib
 
----
 
-### 3. CIFAR-10 Streamlit Application
+### 4. CIFAR-10 Streamlit Application
 
-A lightweight application built to serve the trained CNN model for interactive image classification.
+A lightweight deployment application serving the trained CNN model for interactive image classification.
 
 **Key Highlights**
 
-* Model deployment
-* Streamlit interface
-* Real-time prediction
+* Model loading and inference pipeline
+* Streamlit-based user interface
+* Real-time image prediction
 
 **Core Technologies**
 
@@ -71,17 +90,17 @@ A lightweight application built to serve the trained CNN model for interactive i
 * Streamlit
 * PyTorch
 
----
 
-### 4. Heart Disease Prediction Project
+### 5. Heart Disease Prediction Project
 
-A supervised learning project focused on predicting the likelihood of heart disease using structured clinical data.
+A supervised learning system for predicting heart disease risk using structured clinical data.
 
 **Key Highlights**
 
 * Exploratory Data Analysis
 * Feature preprocessing
-* Model training and evaluation
+* Model training and comparison
+* Performance evaluation
 
 **Core Technologies**
 
@@ -90,18 +109,17 @@ A supervised learning project focused on predicting the likelihood of heart dise
 * Pandas
 * Matplotlib
 
----
 
-### 5. House Price Prediction Project
+### 6. House Price Prediction Project
 
-A regression-based project focused on predicting housing prices using structured tabular data.
+A regression-based machine learning project for predicting housing prices using structured tabular data.
 
 **Key Highlights**
 
 * Data cleaning and preprocessing
 * Feature engineering
 * Regression modeling
-* Model evaluation
+* Model evaluation using standard error metrics
 
 **Core Technologies**
 
@@ -110,11 +128,10 @@ A regression-based project focused on predicting housing prices using structured
 * Pandas
 * NumPy
 
----
 
 ## Technical Stack
 
-Across these projects, the primary technologies used include:
+Across these projects, the primary tools and frameworks used include:
 
 * Python
 * NumPy
@@ -125,38 +142,37 @@ Across these projects, the primary technologies used include:
 * Streamlit
 * Jupyter Notebook
 
----
 
 ## Project Structure
 
-Each project follows a clean and organized structure, typically including:
+Each project follows a clean and modular structure, typically including:
 
-* `data/` for datasets (not tracked if large)
-* `notebooks/` for experimentation
+* `data/` for datasets (large files excluded via .gitignore)
+* `notebooks/` for experimentation and analysis
 * `src/` for modular Python scripts
 * `models/` for trained model artifacts (ignored if large)
-* `README.md` for project-specific documentation
 * `requirements.txt` for dependency management
+* Project-specific `README.md` for documentation
 
----
+This structure emphasizes reproducibility, clarity, and maintainability.
+
 
 ## Objective
 
-The goal of this repository is to:
+The objective of this repository is to:
 
-* Strengthen practical Machine Learning skills
-* Build industry-relevant, portfolio-ready projects
-* Practice structured experimentation and reproducibility
-* Demonstrate model evaluation and performance optimization
-* Prepare for advanced research and professional roles in AI/ML
+* Strengthen applied Machine Learning and Deep Learning skills
+* Build industry-relevant, portfolio-ready systems
+* Practice structured experimentation and performance evaluation
+* Develop deployable ML pipelines
+* Prepare for advanced research and professional AI/ML roles
 
----
 
 ## Author
 
 Saiful Islam Shihab
 
-Bachelor of Computer Science 
+Bachelor of Computer Science (Artificial Intelligence Major)
 
 La Trobe University
 
